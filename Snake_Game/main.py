@@ -102,8 +102,9 @@ class MAIN():
         sys.exit()
     
     def draw_score(self):
-        score_text - str(len(self.snaked.body) - 3)
-        score_surface = game_font.render(score_text, aa, (56, 74, 12))
+        score_text = str(len(self.snaked.body) - 3)
+        score_surface = game_font.render(score_text, True, (56, 74, 12))
+        score.blit(score_surface, position)
 
 SCREEN_UPDATE = pygame.USEREVENT
 pygame.time.set_timer(SCREEN_UPDATE,150)
