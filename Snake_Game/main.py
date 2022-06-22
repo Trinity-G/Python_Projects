@@ -5,6 +5,9 @@ from pygame.math import Vector2
 # Initializes the game
 pygame.init()
 
+# Font
+game_font = pygame.font.Font(none, 25)
+
 # Cells
 cell_size = 30
 cell_number = 20
@@ -25,8 +28,9 @@ clock = pygame.time.Clock()
 # Snake
 class SNAKE:
     def __init__(self):
-        self.body = [Vector2(5, 10), Vector2(6, 10), Vector2(7, 10)]
+        self.body = [Vector2(5, 10), Vector2(4, 10), Vector2(3, 10)]
         self.direction = Vector2(1,0)
+        self.new_block = False
 
     def draw_snake(self):
         for block in self.body:
@@ -36,9 +40,19 @@ class SNAKE:
             pygame.draw.rect(display, (183, 111, 122), block_rect)# Draw a rectangle
 
     def move_snake(self):
-        body_copy = self.body[:-1]
-        body_copy.insert(0, body_copy[0] + self.direction)
-        self.body = body_copy[:]
+        if self.new_block == True:
+            body_copy = self.body[:]
+            body_copy.insert(0, body_copy[0] + self.direction)
+            self.body = body_copy[:]
+            self.new_block = False
+        else:
+            body_copy = self.body[:-1]
+            body_copy.insert(0, body_copy[0] + self.direction)
+            self.body = body_copy[:]
+
+    def add_block(self):
+        self.new_block = True
+        
        
 # Prey
 class PREY:
@@ -62,14 +76,34 @@ class MAIN():
     def update(self):
         self.snake.move_snake()
         self.check_collision()
+        self.check_fail()
 
     def draw_elements(self):
         self.prey.draw_prey()
         self.snake.draw_snake()
 
-    def check_collision(self):# Reposition the fruit, add another block to the snake
-        if self.prey.pos == self.snake.body[0]:
+    def check_collision(self):#add another block to the snake
+        if self.prey.pos == self.snake.body[0]:# Reposition the fruit
             self.prey.randomize()
+            self.snake.add_block()
+
+    def check_fail(self):
+        # Checks if snake is outside of the screen
+        if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
+            self.game_over()
+        
+        # Checks if snake hits itself
+        for block in self.snake.body[1:]:
+            if block == self.snake.body[0]:
+                self.game_over()
+
+    def game_over(self):
+        pygame.quit()
+        sys.exit()
+    
+    def draw_score(self):
+        score_text - str(len(self.snaked.body) - 3)
+        score_surface = game_font.render(score_text, aa, (56, 74, 12))
 
 SCREEN_UPDATE = pygame.USEREVENT
 pygame.time.set_timer(SCREEN_UPDATE,150)
@@ -87,13 +121,17 @@ while True:
         # Keystrokes
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                main_game.snake.direction = Vector2(0, -1)
+                if main_game.snake.direction != 1:
+                    main_game.snake.direction = Vector2(0, -1)
             if event.key == pygame.K_DOWN:
-                main_game.snake.direction = Vector2(0, 1)
+                if main_game.snake.direction != -1:
+                    main_game.snake.direction = Vector2(0, 1)
             if event.key == pygame.K_LEFT:
-                main_game.snake.direction = Vector2(-1, 0)
+                if main_game.snake.direction != 1:
+                    main_game.snake.direction = Vector2(-1, 0)
             if event.key == pygame.K_RIGHT:
-                main_game.snake.direction = Vector2(1, 0)
+                if main_game.snake.direction != -1:
+                    main_game.snake.direction = Vector2(1, 0)
 
     display.fill((80, 80, 80))
     main_game.draw_elements()
