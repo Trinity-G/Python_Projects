@@ -6,7 +6,7 @@ from pygame.math import Vector2
 pygame.init()
 
 # Cells
-cell_size = 40
+cell_size = 30
 cell_number = 20
 
 # Creates the game screen
@@ -33,7 +33,7 @@ class SNAKE:
             x_pos = int(block.x * cell_size)
             y_pos = int(block.y * cell_size)
             block_rect = pygame.Rect(x_pos, y_pos, cell_size, cell_size)# Create a rectangle
-            pygame.draw.rect(display, (183, 191, 122), block_rect)# Draw a rectangle
+            pygame.draw.rect(display, (183, 111, 122), block_rect)# Draw a rectangle
 
     def move_snake(self):
         body_copy = self.body[:-1]
@@ -43,20 +43,38 @@ class SNAKE:
 # Prey
 class PREY:
     def __init__(self):
-        self.x = random.randint(0, cell_number - 1)
-        self.y = random.randint(0, cell_number - 1)
-        self.pos = pygame.math.Vector2(self.x, self.y)
-        # create an x, y position
+        self.randomize()
     
     def draw_prey(self): # Draw a square
-        prey.rect = pygame.Rect(self.pos.x * cell_size, self.pos.y * cell_size, cell_size, cell_size)
-        pygame.draw.rect(display, (100,75,0), prey.rect)
+        prey_rect = pygame.Rect(int(self.pos.x * cell_size),int(self.pos.y * cell_size), cell_size, cell_size)
+        pygame.draw.rect(display, (100,75,0), prey_rect)
 
-prey = PREY()
-snake = SNAKE()
+    def randomize(self):
+        self.x = random.randint(0,cell_number - 1)
+        self.y = random.randint(0,cell_number - 1)
+        self.pos = Vector2(self.x, self.y)
+# Main
+class MAIN():
+    def __init__(self):
+        self.snake = SNAKE()
+        self.prey = PREY()
+
+    def update(self):
+        self.snake.move_snake()
+        self.check_collision()
+
+    def draw_elements(self):
+        self.prey.draw_prey()
+        self.snake.draw_snake()
+
+    def check_collision(self):# Reposition the fruit, add another block to the snake
+        if self.prey.pos == self.snake.body[0]:
+            self.prey.randomize()
 
 SCREEN_UPDATE = pygame.USEREVENT
 pygame.time.set_timer(SCREEN_UPDATE,150)
+
+main_game = MAIN()
 
 # Game loop
 while True:
@@ -65,20 +83,19 @@ while True:
             pygame.quit() 
             sys.exit()# Quits the game
         if event.type == SCREEN_UPDATE:
-            snake.move_snake()
+            main_game.update()
         # Keystrokes
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                snake.direction = Vector2(0, -1)
+                main_game.snake.direction = Vector2(0, -1)
             if event.key == pygame.K_DOWN:
-                snake.direction = Vector2(0, 1)
+                main_game.snake.direction = Vector2(0, 1)
             if event.key == pygame.K_LEFT:
-                snake.direction = Vector2(-1, 0)
+                main_game.snake.direction = Vector2(-1, 0)
             if event.key == pygame.K_RIGHT:
-                snake.direction = Vector2(1, 0)
+                main_game.snake.direction = Vector2(1, 0)
 
     display.fill((80, 80, 80))
-    prey.draw_prey()
-    snake.draw_snake()
+    main_game.draw_elements()
     pygame.display.update() # Refreshes the display
     clock.tick(60) # Sets the fps for the game
