@@ -5,8 +5,8 @@ from pygame.math import Vector2
 # Initializes the game
 pygame.init()
 
-# Font
-game_font = pygame.font.Font(none, 25)
+# Fontgame_font = pygame.font.Font(none, 25)
+
 
 # Cells
 cell_size = 30
