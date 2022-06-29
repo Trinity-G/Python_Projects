@@ -95,3 +95,5 @@ class ship:
 class Player(ship):
     def __init__(self, x, y, health = 100):
         super.__init__(x, y, health)
+        self.ship_image = YELLOW_SPACE_SHIP
+        self.laser_image = YELLOW_LASER
