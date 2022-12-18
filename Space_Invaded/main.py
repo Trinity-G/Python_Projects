@@ -159,7 +159,7 @@ def main():
     enemy_vel = 2
 
     player_vel = 5
-    laser_vel = 8
+    laser_vel = 25
 
     player = Player(300, 630)
 
@@ -183,7 +183,7 @@ def main():
         player.draw(WIN)
 
         if lost:
-            lost_label = lost_font.render("You Lost!!", 1, (255,255,255))
+            lost_label = lost_font.render("You suck at this!!", 1, (255,255,255))
             WIN.blit(lost_label, (WIDTH/2 - lost_label.get_width()/2, 350))
 
         pygame.display.update()
